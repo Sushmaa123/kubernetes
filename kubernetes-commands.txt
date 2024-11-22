@@ -5,7 +5,7 @@ kind: Pod
 metadata:
    name: my-pod
    labels:
-      app: my-app
+      app: frontend
 spec:
   containers:
      - name: nginx-container
@@ -27,19 +27,21 @@ Creation of Replication Controller
 apiVersion: v1
 kind: ReplicationController
 metadata:
-   name: my-rc
-   labels:
-     app: my-app
+  name: frontend-controller
+  labels:
+    app: frontend
 spec:
+  replicas: 3
+  selector:
+    app: frontend
   template:
-     metadata:
-        name: my-pod
-        labels:
-          app: my-app
-     spec:
-       containers:
-          - name: httpd-container
-            image: httpd
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: nginx
 
 Commands:
 ---------
@@ -49,29 +51,30 @@ Commands:
 -->kubectl get replicationcontroller
 
 Creation of ReplicaSet
+-----------------------
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-    name: my-rs
-    labels:
-      app: my-app
+  name: frontend-replicaset
 spec:
-  template:
-      metadata:
-         name: my-pod
-         labels:
-            app: my-app
-      spec:
-        containers: 
-           - name: barista-container
-             image: sushmagowda321/barista
-  selector:
-      matchLabels:
-          app: my-app
   replicas: 3
-
+  selector:
+    matchLabels:
+      app: frontend
+    matchExpressions:
+    - { key: env, operator: In, values: ["prod"] }
+  template:
+    metadata:
+      labels:
+        app: frontend
+        env: prod
+    spec:
+      containers:
+      - name: frontend
+        image: nginx
 
 Commands:
+-----------
 1.To create replicaset
 -->kubectl create -f replicaset-filename.yaml
 2.To list replicaset
@@ -90,20 +93,19 @@ kind: Deployment
 metadata:
     name: my-deployment
     labels:
-      app: my-app
+      app: frontend
 spec:
    template:
       metadata:
-        name: d-pod
         labels:
-           app: my-app
+           app: frontend
       spec:
          containers:
             - name: myapp-container
-              image: finance
+              image: nginx
   selector:
      matchLabels:
-         app: my-app
+         app: frontend
   replicas: 3
 
 Commands:
@@ -129,11 +131,11 @@ service
 apiVersion: v1
 kind: Service
 metadata:
-  name: calci-service
+  name: nginx-service
 spec:
   type: NodePort
   selector:
-    app: my-calci
+    app: frontend
   ports:
     - port: 80   # Port exposed by the service
       targetPort: 80   # Port on the container
@@ -144,4 +146,38 @@ commands:
 -->kubectl apply -f service.yaml
 2.to list the services
 -->kubectl get svc
+
+
+Additional Commands
+--------------------
+Commands to get the yaml file script for pod, replication controller, replicaset, deployment, service
+
+POD
+-->kubectl run my-pod --image=nginx --dry-run=client -o yaml
+
+REPLICATION CONTROLLER
+-->kubectl create rc my-rc --image=nginx --replicas=3 --dry-run=client -o yaml
+
+DEPLOYMENT
+-->kubectl create deployment my-deployment --image=nginx --dry-run=client -o yaml
+
+SERVICE
+-->kubectl expose deployment my-deployment --type=ClusterIP --port=80 --target-port=80 --dry-run=client -o yaml
+
+REPLICASET
+Generate a Deployment YAML as a template:
+-->kubectl create deployment temp-deployment --image=nginx --replicas=3 --dry-run=client -o yaml > temp-deployment.yaml
+
+Edit the temp-deployment.yaml file:
+-->Replace kind: Deployment with kind: ReplicaSet.
+Remove the spec.strategy and spec.selector.matchLabels fields that are specific to Deployments.
+Ensure that the spec.template.metadata.labels match the spec.selector.matchLabels.
+
+Apply the ReplicaSet YAML with a dry run:
+-->kubectl apply -f temp-deployment.yaml --dry-run=client -o yaml
+
+Finally, if satisfied, apply it to the cluster:
+-->kubectl apply -f temp-deployment.yaml
+
+
 
