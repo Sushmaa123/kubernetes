@@ -1,6 +1,9 @@
 NAMESPACES IN KUBERNETES
 -------------------------
-A namespace in Kubernetes is a virtual cluster or a logical partition within a Kubernetes cluster. It provides a mechanism to isolate resources like pods, services, and deployments within the same physical cluster. Namespaces are especially useful in multi-tenant environments or when you want to manage different environments (e.g., development, testing, production) within the same cluster.
+A namespace in Kubernetes is a virtual cluster or a logical partition within a Kubernetes cluster. 
+It provides a mechanism to isolate resources like pods, services, and deployments within the same physical cluster. 
+Namespaces are especially useful in multi-tenant environments or when you want to manage different environments 
+(e.g., development, testing, production) within the same cluster.
 
 KEY FEATURES:
 --------------
