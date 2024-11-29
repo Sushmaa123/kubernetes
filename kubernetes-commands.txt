@@ -17,6 +17,36 @@ spec:
       ports:
         - containerPort: 8080
 
+To run multiple pods with same port number from a single YAML file
+------------------------------------------------------------------
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod-1
+  labels:
+    type: frontend
+spec:
+  containers:
+    - name: app-1
+      image: sushmagowda321/calci
+      ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod-2
+  labels:
+    type: frontend
+spec:
+  containers:
+    - name: app-2
+      image: sushmagowda321/barista
+      ports:
+        - containerPort: 80
+
+command: kubectl apply -f pod.yaml
+
 Commands:
 ----------
 1.To create a pod
