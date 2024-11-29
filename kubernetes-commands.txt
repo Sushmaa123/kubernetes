@@ -3,15 +3,19 @@ Creation of Pod
 apiVersion: v1
 kind: Pod
 metadata:
-   name: my-pod
-   labels:
-      app: frontend
+  name: pod
+  labels:
+    type: frontend
 spec:
   containers:
-     - name: nginx-container
-       image: nginx
-     - name: jenkins-container
-       image: Jenkins/Jenkins
+    - name: app-1
+      image: nginx
+      ports:
+        - containerPort: 80
+    - name: app-2
+      image: jenkins/jenkins
+      ports:
+        - containerPort: 8080
 
 Commands:
 ----------
