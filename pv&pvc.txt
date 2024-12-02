@@ -49,6 +49,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
+  storageClassName: custom-class
   hostPath:
     path: /mnt/data
 
@@ -81,6 +82,7 @@ spec:
   resources:
     requests:
       storage: 500Mi
+  storageClassName: custom-class
 
 commands:
 ---------
@@ -110,7 +112,17 @@ spec:
   - name: storage-volume
     persistentVolumeClaim:
       claimName: pvc-example
-  nodeName: node01
+  
 
 volumeMounts: Mounts the PVC to the specified directory in the container (/usr/share/nginx/html).
 persistentVolumeClaim.claimName: References the PVC created earlier.
+
+Storage Class:
+The StorageClass in Kubernetes defines the storage provisioning strategy for your cluster.
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path
+provisioner: rancher.io/local-path
+reclaimPolicy: Retain
