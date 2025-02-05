@@ -1,3 +1,9 @@
+POD: A Pod is a smallest deployable unit of kubernetes. It represents a single instance of running a container in a cluster
+
+Types of Pods:
+Single-Container Pod (Most common) – Runs a single application container.
+Multi-Container Pod – Runs multiple tightly coupled containers that share storage & network.
+
 Creation of Pod
 -----------------
 apiVersion: v1
@@ -56,6 +62,20 @@ Commands:
 3.To delete the pods
 -->kubectl delete pod pod-name
 
+ReplicationController:A Replication Controller (RC) in Kubernetes ensures that a specified number of replica pods are running at any given time. If a pod crashes or is deleted, the Replication Controller creates a new one to maintain the desired state.
+
+Key Responsibilities:
+--------------------
+Ensures Availability: Maintains a constant number of running pods.
+Self-Healing: If a pod fails, it automatically creates a new one.
+Scaling: Allows manual scaling by updating the number of replicas.
+Load Distribution: Ensures pods are distributed across available nodes.
+
+Replication Controller vs ReplicaSet:
+--------------------------------------
+Replication Controller is an older resource that only supports equality-based selectors (e.g., app=web).
+ReplicaSet is the modern replacement, supporting both equality- and set-based selectors (e.g., app in (web, api)).
+
 Creation of Replication Controller
 ----------------------------------
 apiVersion: v1
@@ -83,6 +103,15 @@ Commands:
 -->kubectl create -f replication-controller-filename.yaml
 2.To list the replication-controller
 -->kubectl get replicationcontroller
+
+ReplicaSet: A ReplicaSet (RS) in Kubernetes ensures that a specified number of identical pod replicas are running at any given time. It is the modern replacement for the Replication Controller and provides more flexibility with label selectors.
+
+Key Responsibilities of a ReplicaSet:
+-------------------------------------
+Ensures Availability: Maintains the desired number of running pods.
+Self-Healing: If a pod crashes or is deleted, a new one is automatically created.
+Scaling: Supports manual and autoscaling of pods.
+Label-based Pod Selection: Supports both equality-based (app=web) and set-based (app in (web, api)) label selectors.
 
 Creation of ReplicaSet
 -----------------------
@@ -119,6 +148,15 @@ Commands:
 -->kubectl delete replicaset replicaset-name
 note: it also deletes the pods inside it
 
+Deployment: A Deployment in Kubernetes manages ReplicaSets to provide declarative updates for applications. It simplifies scaling, rolling updates, and rollbacks.
+
+Key Features of Deployments:
+---------------------------
+Pod Management: Ensures the desired number of replicas are running.
+Rolling Updates: Enables zero-downtime updates by gradually replacing old pods.
+Rollback Support: Easily revert to a previous stable version if an update fails.
+Self-Healing: Automatically replaces failed or deleted pods.
+Scaling: Supports manual and autoscaling of pods.
 
 Creation of Deployment
 ----------------------
@@ -160,8 +198,37 @@ To enter inside a container
 to enter inside a container when we have multiple container inside a pod
 -->kubectl exec -it <pod-name> -c <container-name> -- /bin/bash
 
-service
------------
+Note: A Deployment is the preferred way to manage applications in Kubernetes, offering updates, rollbacks, and scaling in a simple and efficient way.
+
+Service: In Kubernetes, a Service is a method for exposing a network application that is running as one or more Pods in your cluster.
+
+Types of Services in Kubernetes:
+----------------------------------
+Kubernetes provides different types of Services based on how they expose workloads:
+
+Service Type          Description
+------------          -----------
+ClusterIP (default)	  Exposes the service internally within the cluster.
+NodePort	            Exposes the service on a static port on each Node’s IP.
+LoadBalancer	        Provisions an external load balancer (e.g., AWS ELB, GCP LB).
+
+example for ClusterIP:
+----------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-clusterip-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80       # Service port
+      targetPort: 8080  # Pod’s container port
+  type: ClusterIP
+
+example for NodePort:
+--------------------
 apiVersion: v1
 kind: Service
 metadata:
@@ -174,6 +241,22 @@ spec:
     - port: 80   # Port exposed by the service
       targetPort: 80   # Port on the container
       nodePort: 30080
+
+example for LoadBalancer:
+------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-loadbalancer-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
 commands:
 -------------
 1.To create a service
@@ -213,5 +296,11 @@ Apply the ReplicaSet YAML with a dry run:
 Finally, if satisfied, apply it to the cluster:
 -->kubectl apply -f temp-deployment.yaml
 
-
+To get the information of kubernetes objects:
+--------------------------------------------
+Pod: kubectl explain pod
+ReplicationController: kubectl explain rc
+ReplicaSet: kubectl explain rs
+Deployment: kubectl explain deployment
+service: kubectl explain svc
 
