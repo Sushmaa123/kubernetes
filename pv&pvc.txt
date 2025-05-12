@@ -33,9 +33,9 @@ The PVC is referenced in the pod's spec, and storage is mounted.
 
 Access Modes:
 -------------
-ReadWriteOnce (RWO): Mounted as read-write by a single node.
-ReadOnlyMany (ROX): Mounted as read-only by many nodes.
-ReadWriteMany (RWX): Mounted as read-write by many nodes.
+ReadWriteOnce (RWO): Mounted as read-write by a single pod.
+ReadOnlyMany (ROX): Mounted as read-only by many pods.
+ReadWriteMany (RWX): Mounted as read-write by many pods.
 
 example for pv:
 ---------------
