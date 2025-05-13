@@ -190,6 +190,10 @@ Commands:
 -->kubectl set image deployment/deployment-name container-name=new-image-name
 4.To rollout the changes of the deployment
 -->kubectl rollout undo deployment/my-deployment-name
+5.To check the status of the deployment
+-->kubectl rollout status deployment/my-deployment-name
+6.To check the history of deployment
+-->kubectl rollout history deployment/my-deployment-name
 5.to see all created objects at once
 -->kubectl get all
 
