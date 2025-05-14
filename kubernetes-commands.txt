@@ -277,7 +277,12 @@ POD
 -->kubectl run my-pod --image=nginx --dry-run=client -o yaml
 
 REPLICATION CONTROLLER
--->kubectl create rc my-rc --image=nginx --replicas=3 --dry-run=client -o yaml
+-->write the manifest file manually then run,
+kubectl apply --dry-run=client -f rc.yaml -o yaml
+
+REPLICASET
+-->write the manifest file manually then run,
+kubectl apply --dry-run=client -f rs.yaml -o yaml
 
 DEPLOYMENT
 -->kubectl create deployment my-deployment --image=nginx --dry-run=client -o yaml
@@ -285,20 +290,6 @@ DEPLOYMENT
 SERVICE
 -->kubectl expose deployment my-deployment --type=ClusterIP --port=80 --target-port=80 --dry-run=client -o yaml
 
-REPLICASET
-Generate a Deployment YAML as a template:
--->kubectl create deployment temp-deployment --image=nginx --replicas=3 --dry-run=client -o yaml > temp-deployment.yaml
-
-Edit the temp-deployment.yaml file:
--->Replace kind: Deployment with kind: ReplicaSet.
-Remove the spec.strategy and spec.selector.matchLabels fields that are specific to Deployments.
-Ensure that the spec.template.metadata.labels match the spec.selector.matchLabels.
-
-Apply the ReplicaSet YAML with a dry run:
--->kubectl apply -f temp-deployment.yaml --dry-run=client -o yaml
-
-Finally, if satisfied, apply it to the cluster:
--->kubectl apply -f temp-deployment.yaml
 
 To get the information of kubernetes objects:
 --------------------------------------------
